@@ -1,7 +1,8 @@
 from typing import List
 
 from ShipPoint import ShipPoint
-# Ship 类定义
+
+
 class Ship:
     def __init__(self, mmsi):
         self.mmsi = mmsi
@@ -30,6 +31,6 @@ class Ship:
         for point in self.traces:
             print(f'Time: {point.t}, Latitude: {point.lat}, Longitude: {point.lon}')
 
-    def add_traces(self,shipPoints:List[ShipPoint]):
+    def add_traces(self, shipPoints: List[ShipPoint]):
         for i in shipPoints:
             self.add_trace(i)

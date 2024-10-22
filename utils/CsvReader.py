@@ -34,14 +34,13 @@ class CSVReader:
             return [row[col_num] for row in self.data]  # 获取指定列
         return None
 
-    def get_rows_by_value(self,col,val):
+    def get_rows_by_value(self, col, val):
         _index = self.get_headers().index(col)
         sheet = []
         for i in self.data:
             if i[_index] == val:
                 sheet.append(i)
         return sheet
-
 
 
 if __name__ == "__main__":
@@ -55,4 +54,4 @@ if __name__ == "__main__":
     print("表头:", headers)
     print("第1行数据:", first_row)
     # print("第1列数据:", first_column)
-    print(csv_reader.get_rows_by_value("mmsi",'414350530'))
+    print(csv_reader.get_rows_by_value("mmsi", '414350530'))

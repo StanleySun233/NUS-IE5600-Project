@@ -1,6 +1,7 @@
 from datetime import datetime
 from utils import util
 
+
 class ShipPoint:
     def __init__(self, ts, lon, lat, speed, heading):
         self.ts = util.str2datetime(ts)

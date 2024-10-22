@@ -4,6 +4,7 @@ import sqlite3
 
 app = Flask(__name__)
 
+
 # 假设已经有数据库连接代码
 def fetch_ais_data(date):
     conn = sqlite3.connect('./data/ais.db')
@@ -25,6 +26,7 @@ LIMIT 1; """
     conn.close()
     return rows
 
+
 @app.route('/fetch_data', methods=['GET'])
 def fetch_data():
     global current_date
@@ -33,6 +35,7 @@ def fetch_data():
     current_date = date
     # 转化为JSON格式返回给前端
     return jsonify(ais_data)
+
 
 @app.route('/update_map', methods=['GET'])
 def update_map():
@@ -49,9 +52,11 @@ def update_map():
     # 返回船舶最新位置
     return jsonify(ais_data)
 
-@app.route("/",methods=['GET'])
+
+@app.route("/", methods=['GET'])
 def index():
     return render_template("index.html")
+
 
 if __name__ == "__main__":
     app.run(debug=True)

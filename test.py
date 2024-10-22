@@ -3,12 +3,12 @@ import sqlite3
 import folium
 from folium.plugins import TimestampedGeoJson
 import pandas as pd
+
 db = sqlite3.connect("./data/ais.db")
 # 示例数据，假设你的时序数据
 
 data = (db.cursor().
         execute("""select ts,lon,lat from ais where mmsi in (413245110,413426990) """)).fetchall()
-
 
 # 将数据转换为 GeoJSON 格式
 features = []

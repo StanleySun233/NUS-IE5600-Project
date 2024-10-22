@@ -13,7 +13,7 @@ def haversine(lat1, lon1, lat2, lon2):
     dlon = lon2 - lon1
     dlat = lat2 - lat1
 
-    a = sin(dlat / 2)**2 + cos(lat1) * cos(lat2) * sin(dlon / 2)**2
+    a = sin(dlat / 2) ** 2 + cos(lat1) * cos(lat2) * sin(dlon / 2) ** 2
     c = 2 * atan2(sqrt(a), sqrt(1 - a))
 
     distance = R * c
@@ -57,14 +57,11 @@ def check_for_collisions(ships, distance_threshold=0.2):
             ship1_point = last_positions[mmsi1]
             ship2_point = last_positions[mmsi2]
 
-
             distance = haversine(ship1_point.lat, ship1_point.lon, ship2_point.lat, ship2_point.lon)
-            if distance <= distance_threshold and abs(ship1_point.ts - ship2_point.ts) <=timedelta(hours=0.05):
+            if distance <= distance_threshold and abs(ship1_point.ts - ship2_point.ts) <= timedelta(hours=0.05):
                 print(
                     f"Warning: Ships {mmsi1} and {mmsi2} are too close (within {distance_threshold} km) at {ship1_point.ts}!")
                 print()
-
-
 
 
 conn = sqlite3.connect('./data/ais.db')
