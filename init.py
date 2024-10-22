@@ -27,7 +27,7 @@ cursor.execute('''
 cursor.execute('''
     CREATE TABLE ship (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
-        mmsi TEXT UNIQUE
+        mmsi TEXT
     )
 ''')
 
