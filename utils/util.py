@@ -50,7 +50,7 @@ def generate_time_range(beg, end, t):
     return result
 
 
-def show_trace_service(data,mmsi):
+def show_trace_service(data, mmsi):
     # Ensure timestamps are in datetime format
     formatted_data = []
     for row in data:
@@ -65,7 +65,6 @@ def show_trace_service(data,mmsi):
     features = []
 
     for i, row in enumerate(formatted_data):
-
         feature = {
             'type': 'Feature',
             'geometry': {
@@ -107,7 +106,7 @@ def show_trace_service(data,mmsi):
     return m._repr_html_()
 
 
-def show_conj_trace_service(data,mmsi1,mmsi2):
+def show_conj_trace_service(data, mmsi1, mmsi2):
     # Ensure timestamps are in datetime format
     formatted_data = []
     for row in data:

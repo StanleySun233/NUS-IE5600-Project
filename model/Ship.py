@@ -69,7 +69,7 @@ class Ship:
             lons = [trace.lon for trace in closest_traces]
             speeds = [trace.speed for trace in closest_traces]
             headings = [trace.heading for trace in closest_traces]
-            plt.scatter(lons,lats)
+            plt.scatter(lons, lats)
 
             # Step 3: Fit cubic splines for lat, lon, speed, and heading
             # print(times_nearest)
@@ -85,10 +85,10 @@ class Ship:
             speed_interp = spline_speed(ts_timestamp)
             heading_interp = spline_heading(ts_timestamp)
 
-            pred_ts = np.linspace(min(times_nearest),max(times_nearest),10)
+            pred_ts = np.linspace(min(times_nearest), max(times_nearest), 10)
             lat_pred = [spline_lat(i) for i in pred_ts]
             lon_pred = [spline_lon(i) for i in pred_ts]
-            plt.plot(lon_pred,lat_pred)
+            plt.plot(lon_pred, lat_pred)
 
             # Return the interpolated values as a list [ts, lon, lat, speed, heading]
             return [ts, lon_interp, lat_interp, speed_interp, heading_interp]

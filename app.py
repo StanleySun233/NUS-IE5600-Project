@@ -230,7 +230,7 @@ def show_trace(mmsi):
     # Close the database connection
     conn.close()
 
-    return utils.util.show_trace_service(data,mmsi)
+    return utils.util.show_trace_service(data, mmsi)
 
 
 @app.route('/trace/<mmsi>', methods=['GET'])
@@ -241,10 +241,10 @@ def trace_view(mmsi):
 # 查看联合轨迹
 @app.route('/conjection_trace', methods=['POST', 'GET'])
 def conjection_trace():
-    mmsi1 = request.args.get('mmsi1','')
-    mmsi2 = request.args.get('mmsi2','')
-    date = request.args.get('date','')
-    print(mmsi1,mmsi2,date)
+    mmsi1 = request.args.get('mmsi1', '')
+    mmsi2 = request.args.get('mmsi2', '')
+    date = request.args.get('date', '')
+    print(mmsi1, mmsi2, date)
     conn = get_db()
 
     # Retrieve data from the database (timestamp, longitude, latitude for specified ships)
@@ -258,7 +258,7 @@ def conjection_trace():
     data = cursor.fetchall()
     # Close the database connection
     conn.close()
-    return utils.util.show_conj_trace_service(data,mmsi1,mmsi2)
+    return utils.util.show_conj_trace_service(data, mmsi1, mmsi2)
 
 
 # 检查碰撞
