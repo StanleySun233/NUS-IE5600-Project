@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Ship 数据</title>
+</head>
+<body>
+    <h1>船舶列表</h1>
+    <table>
+        <tr>
+            <th>MMSI</th>
+            <th>数据开始时间</th>
+            <th>数据结束时间</th>
+            <th>数据条数</th>
+            <th>操作</th>
+        </tr>
+        {% for ship in ship_data %}
+        <tr>
+            <td><a href="/ship/{{ ship['mmsi'] }}">{{ ship['mmsi'] }}</a></td>
+            <td>{{ ship['start_time'] }}</td>
+            <td>{{ ship['end_time'] }}</td>
+            <td>{{ ship['count'] }}</td>
+            <td><a href="/trace/{{ ship['mmsi'] }}">查看轨迹</a></td>
+        </tr>
+        {% endfor %}
+    </table>
+</body>
+</html>

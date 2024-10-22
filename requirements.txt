@@ -4,3 +4,6 @@ xlrd
 folium
 flask
 lxml
+matplotlib
+scipy
+flask-sqlalchemy

@@ -1,62 +1,113 @@
-from flask import Flask, jsonify, request, render_template
-import datetime
+from flask import Flask, render_template, request, redirect, url_for
 import sqlite3
 
 app = Flask(__name__)
 
+DATABASE = './data/ais.db'
 
-# 假设已经有数据库连接代码
-def fetch_ais_data(date):
-    conn = sqlite3.connect('./data/ais.db')
-    cursor = conn.cursor()
-    query = f"SELECT * FROM ais WHERE ts = '{date}' AND mmsi IN (SELECT mmsi FROM ais GROUP BY mmsi HAVING COUNT(*) > 100)"
-    query = f""" SELECT *
-FROM ais
-WHERE ts BETWEEN DATETIME('{date}', '-10 minutes') AND DATETIME('{date}', '+10 minutes')
-AND mmsi IN (
-    SELECT mmsi 
-    FROM ais 
-    GROUP BY mmsi 
-    HAVING COUNT(*) > 100
-)
-ORDER BY ABS(strftime('%s', ts) - strftime('%s', '{date}'))
-LIMIT 1; """
-    cursor.execute(query)
-    rows = cursor.fetchall()
+
+def get_db():
+    conn = sqlite3.connect(DATABASE)
+    conn.row_factory = sqlite3.Row
+    return conn
+
+
+# AIS CRUD
+@app.route('/ais', methods=['GET'])
+def view_ais():
+    page = int(request.args.get('page', 1))
+    mmsi_filter = request.args.get('mmsi')
+    per_page = 50
+    offset = (page - 1) * per_page
+    conn = get_db()
+    cur = conn.cursor()
+
+    if mmsi_filter:
+        cur.execute('SELECT * FROM ais WHERE mmsi=? LIMIT ? OFFSET ?', (mmsi_filter, per_page, offset))
+    else:
+        cur.execute('SELECT * FROM ais LIMIT ? OFFSET ?', (per_page, offset))
+
+    ais_data = cur.fetchall()
     conn.close()
-    return rows
+    return render_template('ais.html', ais_data=ais_data, page=page)
 
 
-@app.route('/fetch_data', methods=['GET'])
-def fetch_data():
-    global current_date
-    date = request.args.get('date')
-    ais_data = fetch_ais_data(date)
-    current_date = date
-    # 转化为JSON格式返回给前端
-    return jsonify(ais_data)
+# Ship CRUD
+@app.route('/ship', methods=['GET'])
+def view_ship():
+    conn = get_db()
+    cur = conn.cursor()
+    cur.execute('SELECT mmsi, MIN(ts) as start_time, MAX(ts) as end_time, COUNT(*) as count FROM ais GROUP BY mmsi')
+    ship_data = cur.fetchall()
+    conn.close()
+    return render_template('ship.html', ship_data=ship_data)
 
 
-@app.route('/update_map', methods=['GET'])
-def update_map():
-    time_step = int(request.args.get('time_step'))
-    # date = request.args.get('date')
-    date = current_date
-    print(date)
-    print(time_step)
-    # 根据时间步长和日期获取相应的AIS数据
-    timestamp = datetime.datetime.strptime(date, "%Y-%m-%d") + datetime.timedelta(minutes=time_step)
-    print(timestamp)
-    ais_data = fetch_ais_data(timestamp.strftime("%Y-%m-%d %H:%M:%S"))
-
-    # 返回船舶最新位置
-    return jsonify(ais_data)
+@app.route('/ship/<mmsi>', methods=['GET'])
+def view_ais_by_ship(mmsi):
+    return redirect(url_for('view_ais', mmsi=mmsi))
 
 
-@app.route("/", methods=['GET'])
+# 查看轨迹
+def show_trace(mmsi):
+    conn = get_db()
+    cur = conn.cursor()
+    cur.execute('SELECT * FROM ais WHERE mmsi=?', (mmsi,))
+    traces = cur.fetchall()
+    conn.close()
+    # 生成轨迹的HTML表示
+    trace_html = f"<h1>轨迹 for {mmsi}</h1>"
+    for trace in traces:
+        trace_html += f"<p>{trace['ts']} - Lon: {trace['lon']}, Lat: {trace['lat']}, Speed: {trace['speed']}, Heading: {trace['heading']}</p>"
+    return trace_html
+
+
+@app.route('/trace/<mmsi>', methods=['GET'])
+def trace_view(mmsi):
+    return show_trace(mmsi)
+
+
+# 查看联合轨迹
+@app.route('/conjection_trace', methods=['POST','GET'])
+def conjection_trace():
+    mmsi1 = request.form['mmsi1']
+    mmsi2 = request.form['mmsi2']
+    date = request.form['date']
+    return f"<h1>联合轨迹 for {mmsi1} and {mmsi2} on {date}</h1>"
+
+
+# 检查碰撞
+def check_collapse(date, distance=0.2):
+    conn = get_db()
+    cur = conn.cursor()
+    # 简单模拟：仅根据同一天的船舶位置计算碰撞（这里需要添加更多复杂逻辑）
+    cur.execute(
+        'SELECT a.mmsi as mmsi1, b.mmsi as mmsi2 FROM ais a, ais b WHERE a.ts LIKE ? AND b.ts LIKE ? AND a.mmsi != b.mmsi AND abs(a.lon - b.lon) < ? AND abs(a.lat - b.lat) < ?',
+        (f'{date}%', f'{date}%', distance, distance))
+    collision_data = cur.fetchall()
+    conn.close()
+    return collision_data
+
+
+@app.route('/check_collapse', methods=['POST'])
+def check_collision_view():
+    date = request.form['date']
+    distance = float(request.form.get('distance', 0.2))
+    collision_data = check_collapse(date, distance)
+    return render_template('collision.html', collision_data=collision_data)
+
+
+# 首页
+@app.route('/', methods=['GET', 'POST'])
 def index():
-    return render_template("index.html")
+    if request.method == 'POST':
+        mmsi1 = request.form['mmsi1']
+        mmsi2 = request.form['mmsi2']
+        date = request.form['date']
+        distance = float(request.form.get('distance', 0.2))
+        return redirect(url_for('conjection_trace', mmsi1=mmsi1, mmsi2=mmsi2, date=date))
+    return render_template('index.html')
 
 
-if __name__ == "__main__":
+if __name__ == '__main__':
     app.run(debug=True)

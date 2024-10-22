@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>AIS 数据</title>
+</head>
+<body>
+    <h1>AIS 列表</h1>
+    <table>
+        <tr>
+            <th>ID</th>
+            <th>MMSI</th>
+            <th>时间</th>
+            <th>经度</th>
+            <th>纬度</th>
+            <th>速度</th>
+            <th>航向</th>
+        </tr>
+        {% for ais in ais_data %}
+        <tr>
+            <td>{{ ais['id'] }}</td>
+            <td>{{ ais['mmsi'] }}</td>
+            <td>{{ ais['ts'] }}</td>
+            <td>{{ ais['lon'] }}</td>
+            <td>{{ ais['lat'] }}</td>
+            <td>{{ ais['speed'] }}</td>
+            <td>{{ ais['heading'] }}</td>
+        </tr>
+        {% endfor %}
+    </table>
+    <a href="?page={{ page - 1 }}">上一页</a>
+    <a href="?page={{ page + 1 }}">下一页</a>
+</body>
+</html>

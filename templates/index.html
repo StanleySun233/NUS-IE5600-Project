@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>船舶防碰撞系统</title>
+</head>
+<body>
+    <h1>船舶防碰撞系统</h1>
+    <form method="POST">
+        <label>时间(日):</label>
+        <input type="date" name="date"><br>
+        <label>船舶号1:</label>
+        <input type="text" name="mmsi1"><br>
+        <label>船舶号2:</label>
+        <input type="text" name="mmsi2"><br>
+        <label>阈值(默认0.2):</label>
+        <input type="number" step="0.01" name="distance" value="0.2"><br>
+        <button type="submit">查看联合轨迹</button>
+    </form>
+    <form action="/check_collapse" method="POST">
+        <label>时间(日):</label>
+        <input type="date" name="date"><br>
+        <label>阈值(默认0.2):</label>
+        <input type="number" step="0.01" name="distance" value="0.2"><br>
+        <button type="submit">检查碰撞</button>
+    </form>
+</body>
+</html>

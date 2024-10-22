@@ -1,10 +1,9 @@
-from datetime import datetime
-from utils import util
+import utils.util
 
 
 class ShipPoint:
     def __init__(self, ts, lon, lat, speed, heading):
-        self.ts = util.str2datetime(ts)
+        self.ts = utils.util.str2datetime(ts)
         self.lon = lon
         self.lat = lat
         self.speed = speed

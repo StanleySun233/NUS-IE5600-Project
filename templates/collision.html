@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>碰撞检测结果</title>
+</head>
+<body>
+    <h1>碰撞检测结果</h1>
+    <table>
+        <tr>
+            <th>船舶1</th>
+            <th>船舶2</th>
+            <th>操作</th>
+        </tr>
+        {% for collision in collision_data %}
+        <tr>
+            <td>{{ collision['mmsi1'] }}</td> <td>{{ collision['mmsi2'] }}</td> <td><a href="/conjection_trace?mmsi1={{ collision['mmsi1'] }}&mmsi2={{ collision['mmsi2'] }}">查看联合轨迹</a></td> </tr> {% endfor %} </table>
+
+</body> </html>

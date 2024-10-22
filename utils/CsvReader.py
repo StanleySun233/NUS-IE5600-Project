@@ -3,6 +3,8 @@ class CSVReader:
         self.filename = filename
         self.delimiter = delimiter
         self.data = self.read()
+        self.column = self.data[0]
+        self.data = self.data[1:]
 
     def read(self):
         data = []
@@ -20,18 +22,16 @@ class CSVReader:
             return None
 
     def get_headers(self):
-        if self.data:
-            return self.data[0]  # 假设第一行是表头
-        return None
+        return self.column
 
     def get_row(self, row_num):
         if self.data and row_num < len(self.data):
-            return self.data[row_num]  # 获取指定行
+            return self.data[row_num]
         return None
 
     def get_column(self, col_num):
         if self.data and col_num < len(self.data[0]):
-            return [row[col_num] for row in self.data]  # 获取指定列
+            return [row[col_num] for row in self.data]
         return None
 
     def get_rows_by_value(self, col, val):
@@ -41,6 +41,17 @@ class CSVReader:
             if i[_index] == val:
                 sheet.append(i)
         return sheet
+
+    def get_unique_by_col(self,col):
+        _index = self.get_headers().index(col)
+        val = []
+        for i in self.data:
+            if i[_index] not in val:
+                val.append(i[_index])
+        return val
+
+    def __len__(self):
+        return len(self.data)
 
 
 if __name__ == "__main__":
