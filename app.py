@@ -1,3 +1,6 @@
+import logging
+
+from debugpy.common.log import warning
 from flask import Flask, render_template, request, redirect, url_for
 import sqlite3
 
@@ -16,36 +19,196 @@ def get_db():
 @app.route('/ais', methods=['GET'])
 def view_ais():
     page = int(request.args.get('page', 1))
-    mmsi_filter = request.args.get('mmsi')
+    search_mmsi = request.args.get('search_mmsi', '')
     per_page = 50
     offset = (page - 1) * per_page
     conn = get_db()
     cur = conn.cursor()
 
-    if mmsi_filter:
-        cur.execute('SELECT * FROM ais WHERE mmsi=? LIMIT ? OFFSET ?', (mmsi_filter, per_page, offset))
+    # 计算总页数
+    if search_mmsi:
+        search_query = f'%{search_mmsi}%'
+        cur.execute('SELECT COUNT(*) FROM ais WHERE mmsi LIKE ?', (search_query,))
+    else:
+        cur.execute('SELECT COUNT(*) FROM ais')
+
+    total_items = cur.fetchone()[0]
+    total_pages = (total_items + per_page - 1) // per_page  # 向上取整
+
+    if search_mmsi:
+        cur.execute('SELECT * FROM ais WHERE mmsi LIKE ? LIMIT ? OFFSET ?', (search_query, per_page, offset))
     else:
         cur.execute('SELECT * FROM ais LIMIT ? OFFSET ?', (per_page, offset))
 
     ais_data = cur.fetchall()
     conn.close()
-    return render_template('ais.html', ais_data=ais_data, page=page)
+
+    return render_template('ais.html', ais_data=ais_data, page=page, total_pages=total_pages, search_mmsi=search_mmsi)
+# 新建 AIS 数据
+# 新建 AIS 数据
+@app.route('/create_ais', methods=['GET', 'POST'])
+def create_ais():
+    if request.method == 'POST':
+        mmsi = request.form['mmsi']
+        ts = request.form['ts']
+        lon = float(request.form['lon'])
+        lat = float(request.form['lat'])
+        speed = float(request.form['speed'])
+        heading = float(request.form['heading'])
+
+        conn = get_db()
+        cur = conn.cursor()
+
+        # 检查 mmsi 是否存在于 ship 表中
+        cur.execute('SELECT * FROM ship WHERE mmsi=?', (mmsi,))
+        ship = cur.fetchone()
+
+        if ship:
+            # mmsi 存在，允许插入 AIS 数据
+            cur.execute('INSERT INTO ais (mmsi, ts, lon, lat, speed, heading) VALUES (?, ?, ?, ?, ?, ?)',
+                        (mmsi, ts, lon, lat, speed, heading))
+            conn.commit()
+            return redirect(url_for('view_ais'))
+        else:
+            # mmsi 不存在，询问是否创建
+            return render_template('confirm_create_ship.html', mmsi=mmsi, ts=ts, lon=lon, lat=lat, speed=speed,
+                                   heading=heading)
+
+    return render_template('create_ais.html')
+# 创建 ship 并插入 AIS 数据
+
+
+@app.route('/create_ship_and_ais', methods=['POST'])
+def create_ship_and_ais():
+    mmsi = request.form['mmsi']
+    ts = request.form['ts']
+    lon = float(request.form['lon'])
+    lat = float(request.form['lat'])
+    speed = float(request.form['speed'])
+    heading = float(request.form['heading'])
+
+    conn = get_db()
+    cur = conn.cursor()
+
+    # 先创建船舶
+    cur.execute('INSERT INTO ship (mmsi) VALUES (?)', (mmsi,))
+
+    # 再插入 AIS 数据
+    cur.execute('INSERT INTO ais (mmsi, ts, lon, lat, speed, heading) VALUES (?, ?, ?, ?, ?, ?)', (mmsi, ts, lon, lat, speed, heading))
+    conn.commit()
+    conn.close()
+
+    return redirect(url_for('view_ais'))
+
+
+# 修改 AIS 数据
+@app.route('/edit_ais/<int:id>', methods=['GET', 'POST'])
+def edit_ais(id):
+    conn = get_db()
+    cur = conn.cursor()
+
+    if request.method == 'POST':
+        mmsi = request.form['mmsi']
+        ts = request.form['ts']
+        lon = float(request.form['lon'])
+        lat = float(request.form['lat'])
+        speed = float(request.form['speed'])
+        heading = float(request.form['heading'])
+        cur.execute('UPDATE ais SET mmsi=?, ts=?, lon=?, lat=?, speed=?, heading=? WHERE id=?',
+                    (mmsi, ts, lon, lat, speed, heading, id))
+        conn.commit()
+        return redirect(url_for('view_ais'))
+
+    cur.execute('SELECT * FROM ais WHERE id=?', (id,))
+    ais_data = cur.fetchone()
+    conn.close()
+    return render_template('edit_ais.html.html', ais=ais_data)
+
+
+# 删除 AIS 数据
+@app.route('/delete_ais/<int:id>', methods=['GET'])
+def delete_ais(id):
+    conn = get_db()
+    cur = conn.cursor()
+    cur.execute('DELETE FROM ais WHERE id=?', (id,))
+    conn.commit()
+    conn.close()
+    return redirect(url_for('view_ais'))
 
 
 # Ship CRUD
 @app.route('/ship', methods=['GET'])
 def view_ship():
+    page = int(request.args.get('page', 1))
+    search_mmsi = request.args.get('search_mmsi', '')
+    per_page = 50
+    offset = (page - 1) * per_page
     conn = get_db()
     cur = conn.cursor()
-    cur.execute('SELECT mmsi, MIN(ts) as start_time, MAX(ts) as end_time, COUNT(*) as count FROM ais GROUP BY mmsi')
+
+    # 计算总页数
+    if search_mmsi:
+        search_query = f'%{search_mmsi}%'
+        cur.execute('SELECT COUNT(DISTINCT mmsi) FROM ais WHERE mmsi LIKE ?', (search_query,))
+    else:
+        cur.execute('SELECT COUNT(DISTINCT mmsi) FROM ais')
+
+    total_items = cur.fetchone()[0]
+    total_pages = (total_items + per_page - 1) // per_page  # 向上取整
+
+    if search_mmsi:
+        cur.execute(
+            'SELECT mmsi, MIN(ts) as start_time, MAX(ts) as end_time, COUNT(*) as count FROM ais WHERE mmsi LIKE ? GROUP BY mmsi LIMIT ? OFFSET ?',
+            (search_query, per_page, offset))
+    else:
+        cur.execute(
+            'SELECT mmsi, MIN(ts) as start_time, MAX(ts) as end_time, COUNT(*) as count FROM ais GROUP BY mmsi LIMIT ? OFFSET ?',
+            (per_page, offset))
+
     ship_data = cur.fetchall()
     conn.close()
-    return render_template('ship.html', ship_data=ship_data)
+
+    return render_template('ship.html', ship_data=ship_data, page=page, total_pages=total_pages,
+                           search_mmsi=search_mmsi)
+# 新建船舶
+@app.route('/create_ship', methods=['GET', 'POST'])
+def create_ship():
+    if request.method == 'POST':
+        mmsi = request.form['mmsi']
+        conn = get_db()
+        cur = conn.cursor()
+        cur.execute('INSERT INTO ship (mmsi) VALUES (?)', (mmsi,))
+        conn.commit()
+        conn.close()
+        return redirect(url_for('view_ship'))
+    return render_template('create_ship.html')
 
 
 @app.route('/ship/<mmsi>', methods=['GET'])
 def view_ais_by_ship(mmsi):
     return redirect(url_for('view_ais', mmsi=mmsi))
+
+
+# 显示与删除 Ship 相关的 AIS 记录，并确认删除
+@app.route('/delete_ship/<mmsi>', methods=['GET', 'POST'])
+def delete_ship(mmsi):
+    conn = get_db()
+    cur = conn.cursor()
+
+    if request.method == 'POST':
+        # 用户确认删除 Ship 和 AIS 记录
+        cur.execute('DELETE FROM ais WHERE mmsi=?', (mmsi,))
+        cur.execute('DELETE FROM ship WHERE mmsi=?', (mmsi,))
+        conn.commit()
+        conn.close()
+        return redirect(url_for('view_ship'))
+
+    # 获取与该 Ship 相关的 AIS 记录
+    cur.execute('SELECT * FROM ais WHERE mmsi=?', (mmsi,))
+    ais_data = cur.fetchall()
+    conn.close()
+
+    return render_template('confirm_delete_ship.html', ais_data=ais_data, mmsi=mmsi)
 
 
 # 查看轨迹
@@ -68,7 +231,7 @@ def trace_view(mmsi):
 
 
 # 查看联合轨迹
-@app.route('/conjection_trace', methods=['POST','GET'])
+@app.route('/conjection_trace', methods=['POST', 'GET'])
 def conjection_trace():
     mmsi1 = request.form['mmsi1']
     mmsi2 = request.form['mmsi2']

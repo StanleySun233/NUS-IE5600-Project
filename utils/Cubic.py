@@ -58,7 +58,7 @@ class Cubic:
             d_prime[i] = (b[i] - A[i][i - 1] * d_prime[i - 1]) / denom
 
         d_prime[n - 1] = (b[n - 1] - A[n - 1][n - 2] * d_prime[n - 2]) / (
-                    A[n - 1][n - 1] - A[n - 1][n - 2] * c_prime[n - 2])
+                A[n - 1][n - 1] - A[n - 1][n - 2] * c_prime[n - 2])
 
         # 回代求解
         x[n - 1] = d_prime[n - 1]

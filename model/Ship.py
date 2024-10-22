@@ -43,7 +43,7 @@ class Ship:
         for i in shipPoints:
             self.add_trace(i)
 
-    def get_nearest_trace(self, ts: datetime, n=5,iter=PchipInterpolator):
+    def get_nearest_trace(self, ts: datetime, n=5, iter=PchipInterpolator):
         try:
             # Step 1: Check if ts is within the time range of the traces
             if not self.traces:
@@ -95,17 +95,17 @@ class Ship:
         except:
             return None
 
-    def plot_trace(self,show=True):
+    def plot_trace(self, show=True):
         lat = [i.lat for i in self.traces]
         lon = [i.lon for i in self.traces]
-        plt.scatter(lon, lat,alpha=0.5)
+        plt.scatter(lon, lat, alpha=0.5)
         if show:
             plt.show()
 
 
 if __name__ == "__main__":
     ais_df = pd.read_csv('../data/ais.csv')
-    ais_df = ais_df[ais_df["mmsi"]==414350530].head(100).values.tolist()
+    ais_df = ais_df[ais_df["mmsi"] == 414350530].head(100).values.tolist()
     ship = Ship(414350530)
     for i in ais_df:
         trace = ShipPoint(*i[1:])

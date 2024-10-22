@@ -15,19 +15,19 @@ class AisMap():
     def add_ship(self, mmsi):
         self.data[mmsi] = model.Ship.Ship(mmsi)
 
-    def print_ship_line(self,mmsi):
+    def print_ship_line(self, mmsi):
         pass
 
-    def is_collapse(self,mmsi1,mmsi2,date,distance=0.2,t=0.5):
-        ship1:model.Ship.Ship = self.data[mmsi1]
-        ship2:model.Ship.Ship = self.data[mmsi2]
-        date = datetime.strptime(date,'%Y-%m-%d')
+    def is_collapse(self, mmsi1, mmsi2, date, distance=0.2, t=0.5):
+        ship1: model.Ship.Ship = self.data[mmsi1]
+        ship2: model.Ship.Ship = self.data[mmsi2]
+        date = datetime.strptime(date, '%Y-%m-%d')
         traces1 = [trace for trace in ship1.traces if trace.ts.date() == date.date()]
         traces2 = [trace for trace in ship2.traces if trace.ts.date() == date.date()]
 
-        beg = max([traces1[0].ts,traces2[0].ts])
-        end = min([traces1[-1].ts,traces2[-1].ts])
-        ts_range = utils.util.generate_time_range(beg,end,t)
+        beg = max([traces1[0].ts, traces2[0].ts])
+        end = min([traces1[-1].ts, traces2[-1].ts])
+        ts_range = utils.util.generate_time_range(beg, end, t)
         traces1 = [trace for trace in traces1 if beg <= trace.ts <= end]
         traces2 = [trace for trace in traces2 if beg <= trace.ts <= end]
         sp1 = model.Ship.Ship(mmsi1)
@@ -40,17 +40,15 @@ class AisMap():
             t2 = sp2.get_nearest_trace(i)
             if t1 is not None and t2 is not None:
                 sp1lat = t1[1]
-                sp1lon=t1[2]
+                sp1lon = t1[2]
                 sp2lat = t2[1]
-                sp2lon=t2[2]
-                sheet.append([i,sp1lat,sp1lon,sp2lat,sp2lon])
-                dist = utils.util.haversine(sp1lon,sp1lat,sp2lon,sp2lat)
+                sp2lon = t2[2]
+                sheet.append([i, sp1lat, sp1lon, sp2lat, sp2lon])
+                dist = utils.util.haversine(sp1lon, sp1lat, sp2lon, sp2lat)
                 print(dist)
-                if dist<=distance:
+                if dist <= distance:
                     return True
         return False
-
-
 
 
 def create_ais_map(path):
@@ -58,7 +56,7 @@ def create_ais_map(path):
     ais_map = AisMap()
 
     for i in range(len(ais_df)):
-        ais_df.data[i][2] = float(ais_df.data[i][2] )
+        ais_df.data[i][2] = float(ais_df.data[i][2])
         ais_df.data[i][3] = float(ais_df.data[i][3])
         ais_df.data[i][4] = float(ais_df.data[i][4])
         ais_df.data[i][5] = float(ais_df.data[i][5])
@@ -76,4 +74,4 @@ def create_ais_map(path):
 if __name__ == '__main__':
     ais_map = create_ais_map("../data/test.csv")
     print(ais_map.data.keys())
-    print(ais_map.is_collapse("412415970","413457740","2021-05-05"))
+    print(ais_map.is_collapse("412415970", "413457740", "2021-05-05"))

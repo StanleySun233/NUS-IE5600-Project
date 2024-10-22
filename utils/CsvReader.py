@@ -42,7 +42,7 @@ class CSVReader:
                 sheet.append(i)
         return sheet
 
-    def get_unique_by_col(self,col):
+    def get_unique_by_col(self, col):
         _index = self.get_headers().index(col)
         val = []
         for i in self.data:
