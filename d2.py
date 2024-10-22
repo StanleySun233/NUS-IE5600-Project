@@ -1,9 +1,8 @@
 from math import radians, sin, cos, sqrt, atan2
-from ShipPoint import ShipPoint
-from Ship import Ship
-import folium
-from folium.plugins import TimeSliderChoropleth
-import json
+from model.ShipPoint import ShipPoint
+from model.Ship import Ship
+
+
 # 计算两点之间的地球表面距离（单位：公里）
 def haversine(lat1, lon1, lat2, lon2):
     R = 6371.0  # 地球半径，单位为公里
@@ -22,7 +21,7 @@ def haversine(lat1, lon1, lat2, lon2):
 
 
 import sqlite3  # 假设你使用的是SQLite数据库
-from datetime import datetime, timedelta
+from datetime import timedelta
 
 
 # 从数据库中提取最新的船舶坐标数据
