@@ -1,9 +1,5 @@
-import logging
-
-from debugpy.common.log import warning
 from flask import Flask, render_template, request, redirect, url_for
 import sqlite3
-
 app = Flask(__name__)
 
 DATABASE = './data/ais.db'
@@ -13,7 +9,6 @@ def get_db():
     conn = sqlite3.connect(DATABASE)
     conn.row_factory = sqlite3.Row
     return conn
-
 
 # AIS CRUD
 @app.route('/ais', methods=['GET'])
