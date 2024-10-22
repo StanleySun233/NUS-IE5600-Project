@@ -1,5 +1,11 @@
+from folium.plugins import TimestampedGeoJson
+
+import utils.util
+
 from flask import Flask, render_template, request, redirect, url_for
 import sqlite3
+import folium
+
 app = Flask(__name__)
 
 DATABASE = './data/ais.db'
@@ -9,6 +15,7 @@ def get_db():
     conn = sqlite3.connect(DATABASE)
     conn.row_factory = sqlite3.Row
     return conn
+
 
 # AIS CRUD
 @app.route('/ais', methods=['GET'])
@@ -39,6 +46,8 @@ def view_ais():
     conn.close()
 
     return render_template('ais.html', ais_data=ais_data, page=page, total_pages=total_pages, search_mmsi=search_mmsi)
+
+
 # 新建 AIS 数据
 # 新建 AIS 数据
 @app.route('/create_ais', methods=['GET', 'POST'])
@@ -70,6 +79,8 @@ def create_ais():
                                    heading=heading)
 
     return render_template('create_ais.html')
+
+
 # 创建 ship 并插入 AIS 数据
 
 
@@ -89,7 +100,8 @@ def create_ship_and_ais():
     cur.execute('INSERT INTO ship (mmsi) VALUES (?)', (mmsi,))
 
     # 再插入 AIS 数据
-    cur.execute('INSERT INTO ais (mmsi, ts, lon, lat, speed, heading) VALUES (?, ?, ?, ?, ?, ?)', (mmsi, ts, lon, lat, speed, heading))
+    cur.execute('INSERT INTO ais (mmsi, ts, lon, lat, speed, heading) VALUES (?, ?, ?, ?, ?, ?)',
+                (mmsi, ts, lon, lat, speed, heading))
     conn.commit()
     conn.close()
 
@@ -165,6 +177,8 @@ def view_ship():
 
     return render_template('ship.html', ship_data=ship_data, page=page, total_pages=total_pages,
                            search_mmsi=search_mmsi)
+
+
 # 新建船舶
 @app.route('/create_ship', methods=['GET', 'POST'])
 def create_ship():
@@ -206,18 +220,17 @@ def delete_ship(mmsi):
     return render_template('confirm_delete_ship.html', ais_data=ais_data, mmsi=mmsi)
 
 
-# 查看轨迹
 def show_trace(mmsi):
     conn = get_db()
-    cur = conn.cursor()
-    cur.execute('SELECT * FROM ais WHERE mmsi=?', (mmsi,))
-    traces = cur.fetchall()
+
+    # Retrieve data from the database (timestamp, longitude, latitude for specified ships)
+    cursor = conn.cursor()
+    cursor.execute("SELECT mmsi, ts, lon, lat FROM ais WHERE mmsi=? ORDER BY ts", (mmsi,))
+    data = cursor.fetchall()
+    # Close the database connection
     conn.close()
-    # 生成轨迹的HTML表示
-    trace_html = f"<h1>轨迹 for {mmsi}</h1>"
-    for trace in traces:
-        trace_html += f"<p>{trace['ts']} - Lon: {trace['lon']}, Lat: {trace['lat']}, Speed: {trace['speed']}, Heading: {trace['heading']}</p>"
-    return trace_html
+
+    return utils.util.show_trace_service(data,mmsi)
 
 
 @app.route('/trace/<mmsi>', methods=['GET'])
@@ -228,10 +241,24 @@ def trace_view(mmsi):
 # 查看联合轨迹
 @app.route('/conjection_trace', methods=['POST', 'GET'])
 def conjection_trace():
-    mmsi1 = request.form['mmsi1']
-    mmsi2 = request.form['mmsi2']
-    date = request.form['date']
-    return f"<h1>联合轨迹 for {mmsi1} and {mmsi2} on {date}</h1>"
+    mmsi1 = request.args.get('mmsi1','')
+    mmsi2 = request.args.get('mmsi2','')
+    date = request.args.get('date','')
+    print(mmsi1,mmsi2,date)
+    conn = get_db()
+
+    # Retrieve data from the database (timestamp, longitude, latitude for specified ships)
+    cursor = conn.cursor()
+    cursor.execute("""
+        SELECT mmsi, ts, lon, lat 
+        FROM ais 
+        WHERE mmsi IN (?, ?) AND DATE(ts) = DATE(?)
+        ORDER BY ts
+        """, (mmsi1, mmsi2, date))
+    data = cursor.fetchall()
+    # Close the database connection
+    conn.close()
+    return utils.util.show_conj_trace_service(data,mmsi1,mmsi2)
 
 
 # 检查碰撞

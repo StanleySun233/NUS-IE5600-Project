@@ -45,7 +45,6 @@ class AisMap():
                 sp2lon = t2[2]
                 sheet.append([i, sp1lat, sp1lon, sp2lat, sp2lon])
                 dist = utils.util.haversine(sp1lon, sp1lat, sp2lon, sp2lat)
-                print(dist)
                 if dist <= distance:
                     return True
         return False

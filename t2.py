@@ -34,6 +34,7 @@ for mmsi in df['mmsi'].unique():
     last_index = ship_data.index[-1]  # 找到每艘船的最新位置
 
     for i, row in ship_data.iterrows():
+        print(row['ts'],row['ts'].isoformat())
         if i == last_index:
             # 最新位置用长方形表示
             feature = {
