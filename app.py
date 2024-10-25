@@ -1,5 +1,6 @@
 from folium.plugins import TimestampedGeoJson
 
+import service.AisService
 import utils.util
 
 from flask import Flask, render_template, request, redirect, url_for
@@ -220,7 +221,8 @@ def delete_ship(mmsi):
     return render_template('confirm_delete_ship.html', ais_data=ais_data, mmsi=mmsi)
 
 
-def show_trace(mmsi):
+@app.route('/trace/<mmsi>', methods=['GET'])
+def trace_view(mmsi):
     conn = get_db()
 
     # Retrieve data from the database (timestamp, longitude, latitude for specified ships)
@@ -230,12 +232,7 @@ def show_trace(mmsi):
     # Close the database connection
     conn.close()
 
-    return utils.util.show_trace_service(data, mmsi)
-
-
-@app.route('/trace/<mmsi>', methods=['GET'])
-def trace_view(mmsi):
-    return show_trace(mmsi)
+    return service.AisService.show_trace_service(data, mmsi)
 
 
 # 查看联合轨迹

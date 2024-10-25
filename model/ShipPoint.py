@@ -1,9 +1,16 @@
+from datetime import datetime
+
+from django.templatetags.tz import datetimeobject
+
 import utils.util
 
 
 class ShipPoint:
     def __init__(self, ts, lon, lat, speed, heading):
-        self.ts = utils.util.str2datetime(ts)
+        try:
+            self.ts = utils.util.str2datetime(ts)
+        except:
+            self.ts = ts
         self.lon = lon
         self.lat = lat
         self.speed = speed
