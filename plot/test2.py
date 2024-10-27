@@ -8,6 +8,7 @@ import cartopy.feature as cfeature
 import matplotlib.patches as patches
 import model
 import service
+
 # Connect to SQLite database and fetch data
 conn = sqlite3.connect('../data/ais.db')
 cursor = conn.cursor()

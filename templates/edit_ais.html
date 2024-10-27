@@ -3,38 +3,38 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>修改 AIS 数据</title>
+    <title>Edit AIS Data</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
 </head>
 <body class="container">
-<h1 class="my-4">修改 AIS 数据</h1>
+<h1 class="my-4">Edit AIS Data</h1>
 <form method="POST">
     <div class="mb-3">
         <label for="mmsi" class="form-label">MMSI</label>
         <input type="text" class="form-control" name="mmsi" id="mmsi" value="{{ ais['mmsi'] }}">
     </div>
     <div class="mb-3">
-        <label for="ts" class="form-label">时间</label>
+        <label for="ts" class="form-label">Time</label>
         <input type="text" class="form-control" name="ts" id="ts" value="{{ ais['ts'] }}">
     </div>
     <div class="mb-3">
-        <label for="lon" class="form-label">经度</label>
+        <label for="lon" class="form-label">Longitude</label>
         <input type="number" step="0.0001" class="form-control" name="lon" id="lon" value="{{ ais['lon'] }}">
     </div>
     <div class="mb-3">
-        <label for="lat" class="form-label">纬度</label>
+        <label for="lat" class="form-label">Latitude</label>
         <input type="number" step="0.0001" class="form-control" name="lat" id="lat" value="{{ ais['lat'] }}">
     </div>
     <div class="mb-3">
-        <label for="speed" class="form-label">速度</label>
+        <label for="speed" class="form-label">Speed</label>
         <input type="number" step="0.1" class="form-control" name="speed" id="speed" value="{{ ais['speed'] }}">
     </div>
     <div class="mb-3">
-        <label for="heading" class="form-label">航向</label>
+        <label for="heading" class="form-label">Heading</label>
         <input type="number" step="0.1" class="form-control" name="heading" id="heading" value="{{ ais['heading'] }}">
     </div>
-    <button type="submit" class="btn btn-success">保存修改</button>
-    <a href="/ais" class="btn btn-secondary">取消</a>
+    <button type="submit" class="btn btn-success">Save Changes</button>
+    <a href="/ais" class="btn btn-secondary">Cancel</a>
 </form>
 </body>
 </html>

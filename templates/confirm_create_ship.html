@@ -3,12 +3,12 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>确认创建船舶</title>
+    <title>Confirm Ship Creation</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
 </head>
 <body class="container">
-<h1 class="my-4">MMSI {{ mmsi }} 不存在</h1>
-<p>您输入的 MMSI 不存在，是否要创建此船舶？</p>
+<h1 class="my-4">MMSI {{ mmsi }} Not Found</h1>
+<p>The MMSI you entered does not exist. Would you like to create this ship?</p>
 <form method="POST" action="/create_ship_and_ais">
     <input type="hidden" name="mmsi" value="{{ mmsi }}">
     <input type="hidden" name="ts" value="{{ ts }}">
@@ -16,8 +16,8 @@
     <input type="hidden" name="lat" value="{{ lat }}">
     <input type="hidden" name="speed" value="{{ speed }}">
     <input type="hidden" name="heading" value="{{ heading }}">
-    <button type="submit" class="btn btn-success">是，创建船舶并添加 AIS 数据</button>
-    <a href="/create_ais" class="btn btn-secondary">取消</a>
+    <button type="submit" class="btn btn-success">Yes, Create Ship and Add AIS Data</button>
+    <a href="/create_ais" class="btn btn-secondary">Cancel</a>
 </form>
 </body>
 </html>

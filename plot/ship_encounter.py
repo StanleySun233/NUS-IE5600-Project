@@ -12,8 +12,10 @@ import utils.util
 import service
 import matplotlib.ticker as ticker
 import math
-def plot_encounter(ship1,ship2,date):
-    mmsi1,mmsi2 = ship1.mmsi,ship2.mmsi
+
+
+def plot_encounter(ship1, ship2, date):
+    mmsi1, mmsi2 = ship1.mmsi, ship2.mmsi
     # Clean and generate trajectory data
     trace_data1 = [[mmsi1] + i for i in service.AisService.generate_trace_range_by_date(ship1, date)]
     trace_data2 = [[mmsi2] + i for i in service.AisService.generate_trace_range_by_date(ship2, date)]

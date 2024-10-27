@@ -3,22 +3,22 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>确认删除船舶 {{ mmsi }}</title>
+    <title>Confirm Deletion of Ship {{ mmsi }}</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
 </head>
 <body class="container">
-<h1 class="my-4">确认删除船舶 {{ mmsi }}</h1>
-<p>以下是与船舶 <strong>{{ mmsi }}</strong> 相关的 AIS 记录：</p>
+<h1 class="my-4">Confirm Deletion of Ship {{ mmsi }}</h1>
+<p>The following are AIS records related to ship <strong>{{ mmsi }}</strong>:</p>
 <table class="table table-striped">
     <thead>
     <tr>
         <th>ID</th>
         <th>MMSI</th>
-        <th>时间</th>
-        <th>经度</th>
-        <th>纬度</th>
-        <th>速度</th>
-        <th>航向</th>
+        <th>Time</th>
+        <th>Longitude</th>
+        <th>Latitude</th>
+        <th>Speed</th>
+        <th>Heading</th>
     </tr>
     </thead>
     <tbody>
@@ -37,8 +37,8 @@
 </table>
 
 <form method="POST">
-    <button type="submit" class="btn btn-danger">确认删除</button>
-    <a href="/ship" class="btn btn-secondary">取消</a>
+    <button type="submit" class="btn btn-danger">Confirm Deletion</button>
+    <a href="/ship" class="btn btn-secondary">Cancel</a>
 </form>
 </body>
 </html>

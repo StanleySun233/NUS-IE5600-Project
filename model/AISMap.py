@@ -20,7 +20,7 @@ class AisMap():
     def is_collapse(self, mmsi1, mmsi2, date=None, distance=0.2, t=0.5):
         ship1: model.Ship.Ship = self.data[mmsi1]
         ship2: model.Ship.Ship = self.data[mmsi2]
-        stss = [1000,'None',datetime.today().strftime('%Y-%m-%d %H:%M:%S')]
+        stss = [1000, 'None', datetime.today().strftime('%Y-%m-%d %H:%M:%S')]
         traces1 = [trace for trace in ship1.traces]
         traces2 = [trace for trace in ship2.traces]
 
@@ -51,11 +51,11 @@ class AisMap():
                 dist = utils.util.haversine(sp1lon, sp1lat, sp2lon, sp2lat)
                 if dist < stss[0]:
                     stss[0] = dist
-                    stss[1] = self.encounter_type(sp1hed,sp2hed)
+                    stss[1] = self.encounter_type(sp1hed, sp2hed)
                     stss[2] = i
         return stss
 
-    def encounter_type(self,sp1hed,sp2hed):
+    def encounter_type(self, sp1hed, sp2hed):
         heading_diff = abs(sp1hed - sp2hed)
 
         if 170 < heading_diff < 190:

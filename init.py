@@ -5,8 +5,7 @@ import pandas as pd
 # Check if the database already exists
 db_path = './data/ais.db'
 if os.path.exists(db_path):
-    print("Database already exists. Exiting.")
-    exit(0)
+    os.remove(db_path)
 
 # Create the database
 conn = sqlite3.connect(db_path)

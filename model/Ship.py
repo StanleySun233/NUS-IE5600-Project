@@ -6,6 +6,7 @@ from model.ShipPoint import ShipPoint
 import matplotlib.pyplot as plt
 import utils.Cubic
 
+
 class Ship:
     def __init__(self, mmsi):
         self.mmsi = mmsi
