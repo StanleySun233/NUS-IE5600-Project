@@ -1,4 +1,7 @@
+import math
 from datetime import datetime
+
+from geopy.distance import geodesic
 
 import model
 import model.ShipPoint
@@ -21,7 +24,7 @@ class AisMap():
     def is_collapse(self, mmsi1, mmsi2, date=None, distance=0.2, t=0.5):
         ship1: model.Ship.Ship = self.data[mmsi1]
         ship2: model.Ship.Ship = self.data[mmsi2]
-        stss = []
+        stss = [1000,'None']
         if date:
             date = datetime.strptime(date, '%Y-%m-%d')
             traces1 = [trace for trace in ship1.traces if trace.ts.date() == date.date()]
@@ -46,15 +49,33 @@ class AisMap():
             if t1 is not None and t2 is not None:
                 sp1lat = t1[1]
                 sp1lon = t1[2]
+                sp1spd = t1[3]
+                sp1hed = t1[4]
                 sp2lat = t2[1]
                 sp2lon = t2[2]
+                sp2spd = t2[3]
+                sp2hed = t2[4]
+
                 sheet.append([i, sp1lat, sp1lon, sp2lat, sp2lon])
                 dist = utils.util.haversine(sp1lon, sp1lat, sp2lon, sp2lat)
-                stss.append(dist)
-        if stss is None or len(stss) == 0:
-            return 100
+                if dist < stss[0]:
+                    stss[0] = dist
+                    stss[1] = self.encounter_type(sp1hed,sp2hed)
+        return stss
+
+    def encounter_type(self,sp1hed,sp2hed):
+        heading_diff = abs(sp1hed - sp2hed)
+
+        if 170 < heading_diff < 190:
+            return "Head-on Situation"
+        elif 70 < heading_diff < 110:
+            return "Crossing Situation"
+        elif heading_diff < 20 or heading_diff > 340:
+            return "Overtaking Situation"
+        elif 10 <= heading_diff <= 30:
+            return "Parallel Running Situation"
         else:
-            return min(stss)
+            return "Converging Situation"
 
 
 def create_ais_map(path):

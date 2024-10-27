@@ -1,34 +1,9 @@
-# 查询轨迹数量大于1000的船
-
-```sql
-select *
-from ais
-where MMSI in
-      (select MMSI
-       from ais
-       group by MMSI
-       having count(MMSI) >= 1000
-    limit 100
-    )
-order by MMSI
-```
-
-使用django生成一个管理系统，对数据库data.db的ais表和ship进行增删改查。查询使用分页，一页50个数据。
-create table ais
-(
-id INTEGER,
-mmsi TEXT,
-ts TEXT,
-lon REAL,
-lat REAL,
-speed REAL,
-heading REAL
-);
-create table ship
-(
-id integer,
-mmsi integer
-);
-实现以下功能：
-
-1. 主页显示
+1. 功能
+* 数据
+  1. 实现ship和ais数据的增、删、改、查功能。
+  2. 实现ship和ais的交叉查询逻辑。
+* 算法
+  1. 实现`Cubic`三次样条插值、`Pchip`分段三次`Hermite`插值方法。
+  2. 通过阈值方法，实现ais异常数据数据清洗。
+  3. 实现船舶碰撞的四种方法
+2. 

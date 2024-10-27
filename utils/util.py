@@ -84,3 +84,16 @@ def generate_folium_map(formatted_data, mmsi):
     timestamped_geojson.add_to(m)
 
     return m._repr_html_()
+
+
+def relative_velocity(spd1, hed1, spd2, hed2):
+    # 计算船1的速度分量
+    v1x = spd1 * math.cos(math.radians(hed1))
+    v1y = spd1 * math.sin(math.radians(hed1))
+    # 计算船2的速度分量
+    v2x = spd2 * math.cos(math.radians(hed2))
+    v2y = spd2 * math.sin(math.radians(hed2))
+    # 计算相对速度
+    v_rel_x = v2x - v1x
+    v_rel_y = v2y - v1y
+    return v_rel_x, v_rel_y

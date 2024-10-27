@@ -97,3 +97,55 @@ class Cubic:
             if self.x[i] <= x_val <= self.x[i + 1]:
                 return i
         return None
+
+
+class Pchip:
+    def __init__(self, x, y):
+        self.x = x
+        self.y = y
+        self.h = [x[i + 1] - x[i] for i in range(len(x) - 1)]  # 每个间隔的长度
+        self.slopes = [(y[i + 1] - y[i]) / self.h[i] for i in range(len(y) - 1)]
+        self.derivatives = self.compute_derivatives()
+        self.coefficients = self.compute_coefficients()
+
+    def compute_derivatives(self):
+        """计算每个点的导数以保持单调性。"""
+        n = len(self.slopes) + 1
+        derivatives = [0] * n
+
+        # 计算导数, 确保单调性
+        for i in range(1, n - 1):
+            if self.slopes[i - 1] * self.slopes[i] <= 0:
+                derivatives[i] = 0
+            else:
+                w1 = 2 * self.h[i] + self.h[i - 1]
+                w2 = self.h[i] + 2 * self.h[i - 1]
+                derivatives[i] = (w1 + w2) / (w1 / self.slopes[i - 1] + w2 / self.slopes[i])
+
+        # 边界导数
+        derivatives[0] = self.slopes[0]
+        derivatives[-1] = self.slopes[-1]
+
+        return derivatives
+
+    def compute_coefficients(self):
+        """计算每个区间的多项式系数。"""
+        coefficients = []
+        for i in range(len(self.slopes)):
+            dy0 = self.derivatives[i]
+            dy1 = self.derivatives[i + 1]
+            c0 = self.y[i]
+            c1 = dy0
+            c2 = (3 * self.slopes[i] - 2 * dy0 - dy1) / self.h[i]
+            c3 = (dy0 + dy1 - 2 * self.slopes[i]) / (self.h[i] ** 2)
+            coefficients.append((c0, c1, c2, c3))
+        return coefficients
+
+    def __call__(self, x_new):
+        """在 x_new 上进行插值。"""
+        for i in range(len(self.x) - 1):
+            if self.x[i] <= x_new <= self.x[i + 1]:
+                c0, c1, c2, c3 = self.coefficients[i]
+                dx = x_new - self.x[i]
+                return c0 + c1 * dx + c2 * dx ** 2 + c3 * dx ** 3
+        raise ValueError("x_new out of bounds.")

@@ -7,3 +7,5 @@ lxml
 matplotlib
 scipy
 flask-sqlalchemy
+opencv-python
+cartopy

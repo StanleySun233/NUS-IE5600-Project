@@ -1,15 +1,10 @@
-import sqlite3
 from typing import List
-
 import pandas as pd
-import numpy as np
 import model.ShipPoint
 from datetime import datetime
-import utils.Cubic
 from model.ShipPoint import ShipPoint
 import matplotlib.pyplot as plt
-from scipy.interpolate import CubicSpline, BarycentricInterpolator, Akima1DInterpolator, PchipInterpolator
-
+import utils.Cubic
 
 class Ship:
     def __init__(self, mmsi):
@@ -43,7 +38,7 @@ class Ship:
         for i in shipPoints:
             self.add_trace(i)
 
-    def get_nearest_trace(self, ts: datetime, n=5, iter=PchipInterpolator):
+    def get_nearest_trace(self, ts: datetime, n=5, iter=utils.Cubic.Pchip):
         # Step 1: Check if ts is within the time range of the traces
         if not self.traces:
             return None
