@@ -1,7 +1,8 @@
 import itertools
-from datetime import datetime
+from datetime import datetime, timedelta
 from geopy.distance import geodesic
 import model
+import plot.ship_encounter
 import utils
 
 
@@ -9,6 +10,21 @@ def generate_trace_range(ship: model.Ship.Ship, t=0.5):
     traces = [[trace.ts, trace.lat, trace.lon] for trace in ship.traces]
     beg = traces[0][0]
     end = traces[-1][0]
+    sheet = []
+    ts_range = utils.util.generate_time_range(beg, end, t)
+    for i in ts_range:
+        trace = ship.get_nearest_trace(i)
+        if trace is not None:
+            lat = trace[1]
+            lon = trace[2]
+            speed = trace[3]
+            heading = trace[4]
+            sheet.append([i, lat, lon,speed,heading])
+    return sheet
+
+def generate_trace_range_by_date(ship: model.Ship.Ship,date,t=0.5):
+    beg = date-timedelta(minutes=10)
+    end = date+timedelta(minutes=10)
     sheet = []
     ts_range = utils.util.generate_time_range(beg, end, t)
     for i in ts_range:
@@ -78,6 +94,23 @@ def show_trace_service(data, mmsi):
     return utils.util.generate_folium_map(formatted_data, mmsi)
 
 
+def show_plot_detail(data,mmsi1,mmsi2,file):
+    ship1 = model.Ship.Ship(mmsi1)
+    ship2 = model.Ship.Ship(mmsi2)
+    for row in data:
+        # Convert timestamp to datetime format
+        ts = utils.util.str2datetime(row[1])
+        if row[0] == mmsi1:
+            ship1.add_trace(model.ShipPoint.ShipPoint(ts, row[2], row[3], row[4], row[5]))
+        else:
+            ship2.add_trace(model.ShipPoint.ShipPoint(ts, row[2], row[3], row[4], row[5]))
+
+    amap = model.AISMap.AisMap()
+    amap.data = {mmsi1:ship1, mmsi2:ship2}
+    is_collision, encounter, ts = amap.is_collapse(mmsi1,mmsi2)
+    date = ts
+    plot.ship_encounter.plot_encounter_video(ship1,ship2,date,file)
+
 def show_conj_trace_service(data, mmsi1, mmsi2):
     ship1 = model.Ship.Ship(mmsi1)
     ship2 = model.Ship.Ship(mmsi2)
@@ -107,7 +140,7 @@ def check_is_collision(data, distance,date):
     result = []
 
     for i, j in itertools.combinations(amap.data.keys(), 2):
-        is_collision,encounter = amap.is_collapse(i, j)
+        is_collision,encounter,ts = amap.is_collapse(i, j)
         if is_collision <= distance:
-            result.append({'mmsi1': i, 'mmsi2': j, 'distance': round(is_collision, 2),'date':date,'encounter':encounter})
+            result.append({'mmsi1': i, 'mmsi2': j, 'distance': round(is_collision, 2),'date':date,'encounter':encounter,'ts':ts})
     return result

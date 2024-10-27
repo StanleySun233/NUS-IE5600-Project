@@ -1,9 +1,11 @@
+import os
+
 from folium.plugins import TimestampedGeoJson
 
 import service.AisService
 import utils.util
 
-from flask import Flask, render_template, request, redirect, url_for
+from flask import Flask, render_template, request, redirect, url_for, send_file
 import sqlite3
 import folium
 
@@ -247,7 +249,7 @@ def conjection_trace():
     # Retrieve data from the database (timestamp, longitude, latitude for specified ships)
     cursor = conn.cursor()
     cursor.execute("""
-        SELECT mmsi, ts, lon, lat 
+        SELECT mmsi, ts, lon, lat, speed, heading
         FROM ais 
         WHERE mmsi IN (?, ?) AND DATE(ts) = DATE(?)
         ORDER BY ts
@@ -256,6 +258,8 @@ def conjection_trace():
     # Close the database connection
     conn.close()
     # return utils.util.show_conj_trace_service(data, mmsi1, mmsi2)
+    video_filename = f"./video/{mmsi1}_{mmsi2}_{date}.mp4"
+    service.AisService.show_plot_detail(data, mmsi1, mmsi2, video_filename)
     return service.AisService.show_conj_trace_service(data, mmsi1, mmsi2)
 
 
@@ -282,7 +286,32 @@ def check_collision_view():
     # 将 date 作为查询参数传递
     return render_template('collision.html', collision_data=collision_data, date=date)
 
+@app.route('/conjection_trace_video', methods=['POST', 'GET'])
+def plot_detail():
+    mmsi1 = request.args.get('mmsi1', '')
+    mmsi2 = request.args.get('mmsi2', '')
+    date = request.args.get('date', '')
 
+    print(mmsi1, mmsi2, date)
+    conn = get_db()
+
+    # Retrieve data from the database (timestamp, longitude, latitude for specified ships)
+    cursor = conn.cursor()
+    cursor.execute("""
+        SELECT mmsi, ts, lon, lat, speed,heading
+        FROM ais 
+        WHERE mmsi IN (?, ?) AND DATE(ts) = DATE(?)
+        ORDER BY ts
+        """, (mmsi1, mmsi2, date))
+    data = cursor.fetchall()
+    # Close the database connection
+    conn.close()
+
+    video_filename = f"./video/{mmsi1}_{mmsi2}_{date}.mp4"
+    service.AisService.show_plot_detail(data, mmsi1, mmsi2, video_filename)
+
+    # Render the HTML template with Bootstrap to play the video
+    return render_template('conjection_trace_video.html', video_file=video_filename)
 # 首页
 @app.route('/', methods=['GET', 'POST'])
 def index():

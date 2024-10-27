@@ -1,8 +1,4 @@
-import math
 from datetime import datetime
-
-from geopy.distance import geodesic
-
 import model
 import model.ShipPoint
 import utils.CsvReader
@@ -24,14 +20,9 @@ class AisMap():
     def is_collapse(self, mmsi1, mmsi2, date=None, distance=0.2, t=0.5):
         ship1: model.Ship.Ship = self.data[mmsi1]
         ship2: model.Ship.Ship = self.data[mmsi2]
-        stss = [1000,'None']
-        if date:
-            date = datetime.strptime(date, '%Y-%m-%d')
-            traces1 = [trace for trace in ship1.traces if trace.ts.date() == date.date()]
-            traces2 = [trace for trace in ship2.traces if trace.ts.date() == date.date()]
-        else:
-            traces1 = [trace for trace in ship1.traces]
-            traces2 = [trace for trace in ship2.traces]
+        stss = [1000,'None',datetime.today().strftime('%Y-%m-%d %H:%M:%S')]
+        traces1 = [trace for trace in ship1.traces]
+        traces2 = [trace for trace in ship2.traces]
 
         beg = max([traces1[0].ts, traces2[0].ts])
         end = min([traces1[-1].ts, traces2[-1].ts])
@@ -53,7 +44,7 @@ class AisMap():
                 sp1hed = t1[4]
                 sp2lat = t2[1]
                 sp2lon = t2[2]
-                sp2spd = t2[3]
+
                 sp2hed = t2[4]
 
                 sheet.append([i, sp1lat, sp1lon, sp2lat, sp2lon])
@@ -61,6 +52,7 @@ class AisMap():
                 if dist < stss[0]:
                     stss[0] = dist
                     stss[1] = self.encounter_type(sp1hed,sp2hed)
+                    stss[2] = i
         return stss
 
     def encounter_type(self,sp1hed,sp2hed):
