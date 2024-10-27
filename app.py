@@ -29,7 +29,10 @@ def view_ais():
     - Closes database connection and renders AIS data in the 'ais.html' template.
     """
     page = int(request.args.get('page', 1))
+    mmsi = request.args.get('mmsi', '')
     search_mmsi = request.args.get('search_mmsi', '')
+    if mmsi != '':
+        search_mmsi = mmsi
     per_page = 50
     offset = (page - 1) * per_page
     conn = get_db()
@@ -56,6 +59,7 @@ def view_ais():
 
     # Render the AIS data in the 'ais.html' template with pagination info
     return render_template('ais.html', ais_data=ais_data, page=page, total_pages=total_pages, search_mmsi=search_mmsi)
+
 
 # Create new AIS data
 @app.route('/create_ais', methods=['GET', 'POST'])
@@ -128,7 +132,6 @@ def create_ship_and_ais():
     conn.close()
 
     return redirect(url_for('view_ais'))
-
 
 
 # Edit AIS data
@@ -305,7 +308,6 @@ def trace_view(mmsi):
     conn.close()
 
     return service.AisService.show_trace_service(data, mmsi)
-
 
 
 # View joint trace of two ships

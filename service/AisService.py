@@ -1,6 +1,5 @@
 import itertools
 from datetime import timedelta
-from geopy.distance import geodesic
 import model
 import plot.ship_encounter
 import utils
@@ -39,46 +38,49 @@ def generate_trace_range_by_date(ship: model.Ship.Ship, date, t=0.5):
     return sheet
 
 
-def clear_data(sheet):
-    # 设置阈值
-    MAX_SPEED = 40  # 单位为节
-    MAX_ACCELERATION = 10  # 单位为节/秒
-    MAX_HEADING_CHANGE = 45  # 最大允许的方向变化
-    MAX_DISTANCE = 0.20  # 单位为公里
+from geopy.distance import geodesic
 
-    # 用于存储清理后的数据
+
+def clear_data(sheet):
+    # Set thresholds
+    MAX_SPEED = 40  # Maximum speed in knots
+    MAX_ACCELERATION = 10  # Maximum acceleration in knots per second
+    MAX_HEADING_CHANGE = 45  # Maximum allowable heading change in degrees
+    MAX_DISTANCE = 0.20  # Maximum distance in kilometers
+
+    # List to store cleaned data
     filtered_data = []
 
-    # 读取轨迹点数据
+    # Iterate through the trajectory data points
     for i in range(1, len(sheet)):
-        prev = sheet[i - 1]
-        curr = sheet[i]
+        prev = sheet[i - 1]  # Previous data point
+        curr = sheet[i]  # Current data point
 
-        # 时间差
+        # Calculate time difference in seconds
         time_diff = (curr[0] - prev[0]).total_seconds()
         if time_diff == 0:
-            continue  # 跳过重复的时间点
+            continue  # Skip duplicate timestamps
 
-        # 速度检查
+        # Speed check
         if curr[3] < 0 or curr[3] > MAX_SPEED:
-            continue  # 剔除速度异常的点
+            continue  # Exclude points with abnormal speed
 
-        # 加速度检查
+        # Acceleration check
         acceleration = abs(curr[3] - prev[3]) / time_diff
         if acceleration > MAX_ACCELERATION:
-            continue  # 剔除加速度异常的点
+            continue  # Exclude points with abnormal acceleration
 
-        # 方向变化检查
+        # Heading change check
         heading_change = abs(curr[4] - prev[4])
         if heading_change > MAX_HEADING_CHANGE:
-            continue  # 剔除方向突变的点
+            continue  # Exclude points with abrupt heading changes
 
-        # 距离检查
+        # Distance check
         distance = geodesic((prev[1], prev[2]), (curr[1], curr[2])).km
         if distance > MAX_DISTANCE:
-            continue  # 剔除距离异常的点
+            continue  # Exclude points with abnormal distance
 
-        # 如果通过所有检查，保留该点
+        # Keep the point if it passes all checks
         filtered_data.append(curr)
 
     return filtered_data

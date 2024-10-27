@@ -1,11 +1,9 @@
-1. 功能
-
-* 数据
-    1. 实现ship和ais数据的增、删、改、查功能。
-    2. 实现ship和ais的交叉查询逻辑。
-* 算法
-    1. 实现`Cubic`三次样条插值、`Pchip`分段三次`Hermite`插值方法。
-    2. 通过阈值方法，实现ais异常数据数据清洗。
-    3. 实现船舶碰撞的四种方法
-
-2. 
+* Data
+    1. Implement the functions of adding, deleting, modifying and checking ship and ais data.
+    2. Implement the cross-query logic of ship and ais.
+* Algorithm
+    1. Implement the cubic spline interpolation of `Cubic` and the segmented cubic Hermite interpolation method of
+       `Pchip`.
+    2. Implement the data cleaning of ais abnormal data through the threshold method.
+    3. Implement five detection methods for ship collision.
+    4. Generate visual trajectory diagrams and collision simulation videos.

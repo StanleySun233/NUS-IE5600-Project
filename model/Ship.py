@@ -1,11 +1,13 @@
 from typing import List
 import pandas as pd
+from scipy.interpolate import interp1d, Akima1DInterpolator, UnivariateSpline
+
 import model.ShipPoint
 from datetime import datetime
 from model.ShipPoint import ShipPoint
 import matplotlib.pyplot as plt
 import utils.Cubic
-
+import numpy as np
 
 class Ship:
     def __init__(self, mmsi):
@@ -39,7 +41,7 @@ class Ship:
         for i in shipPoints:
             self.add_trace(i)
 
-    def get_nearest_trace(self, ts: datetime, n=5, iter=utils.Cubic.Pchip):
+    def get_nearest_trace(self, ts: datetime, n=5, iter=utils.Cubic.Pchip,plots=False):
         # Step 1: Check if ts is within the time range of the traces
         if not self.traces:
             return None
@@ -69,8 +71,6 @@ class Ship:
         if len(headings) == 0:
             headings = [1]
 
-        # plt.scatter(lons, lats)
-
         # Step 3: Fit cubic splines for lat, lon, speed, and heading
         # print(times_nearest)
         try:
@@ -91,18 +91,33 @@ class Ship:
             speed_interp = sum(speeds) / len(speeds)
             heading_interp = sum(headings) / len(headings)
 
-        # pred_ts = np.linspace(min(times_nearest), max(times_nearest), 10)
-        # lat_pred = [spline_lat(i) for i in pred_ts]
-        # lon_pred = [spline_lon(i) for i in pred_ts]
-        # plt.plot(lon_pred, lat_pred)
-
         # Return the interpolated values as a list [ts, lon, lat, speed, heading]
+        if plots:
+            pred_ts = np.linspace(min(times_nearest), max(times_nearest), 10)
+            lat_pred = [spline_lat(i) for i in pred_ts]
+            lon_pred = [spline_lon(i) for i in pred_ts]
+            plt.plot(lon_pred, lat_pred,label='time-series line')
+            plt.scatter(lons, lats,label='used')
+            plt.scatter(sum(lons)/len(lons), sum(lats)/len(lats),label='mean')
+
+            spline_lat_linear = interp1d(times_nearest, lats, kind='linear', fill_value="extrapolate")
+            spline_lon_linear = interp1d(times_nearest, lons, kind='linear', fill_value="extrapolate")
+            lat_interp_linear = spline_lat_linear(ts_timestamp)
+            lon_interp_linear = spline_lon_linear(ts_timestamp)
+            plt.scatter(lon_interp_linear, lat_interp_linear,label='linear')
+
+            spline_lat_nearest = interp1d(times_nearest, lats, kind='nearest', fill_value="extrapolate")
+            spline_lon_nearest = interp1d(times_nearest, lons, kind='nearest', fill_value="extrapolate")
+            lat_interp_linear = spline_lat_nearest(ts_timestamp)
+            lon_interp_linear = spline_lon_nearest(ts_timestamp)
+            plt.scatter(lon_interp_linear, lat_interp_linear,label='nearest')
+
         return [ts, lon_interp, lat_interp, speed_interp, heading_interp]
 
     def plot_trace(self, show=True):
         lat = [i.lat for i in self.traces]
         lon = [i.lon for i in self.traces]
-        plt.scatter(lon, lat, alpha=0.5)
+        plt.scatter(lon, lat, alpha=0.5,label='origin')
         if show:
             plt.show()
 
@@ -116,10 +131,11 @@ if __name__ == "__main__":
         ship.add_trace(trace)
     print(ship.traces[20])
     dt = utils.util.str2datetime('2021-05-06 14:18:51')
-    add = ship.get_nearest_trace(dt)
+    add = ship.get_nearest_trace(dt,plots=True)
     print(add)
     ship.plot_trace(False)
     if add:
-        plt.scatter(add[1], add[2])
+        plt.scatter(add[1], add[2],label='Pchip')
+    plt.legend()
     plt.show()
     print([i[1] for i in ais_df])

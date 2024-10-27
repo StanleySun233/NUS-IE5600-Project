@@ -40,7 +40,8 @@
 <!-- Search Form -->
 <form method="GET" action="/ship" class="row mb-3">
     <div class="col-md-4">
-        <input type="text" name="search_mmsi" class="form-control" placeholder="Search MMSI..." value="{{ search_mmsi }}">
+        <input type="text" name="search_mmsi" class="form-control" placeholder="Search MMSI..."
+               value="{{ search_mmsi }}">
     </div>
     <div class="col-md-2">
         <button type="submit" class="btn btn-primary">Search</button>
@@ -59,16 +60,16 @@
     </thead>
     <tbody>
     {% for ship in ship_data %}
-        <tr>
-            <td><a href="/ship/{{ ship['mmsi'] }}">{{ ship['mmsi'] }}</a></td>
-            <td>{{ ship['start_time'] }}</td>
-            <td>{{ ship['end_time'] }}</td>
-            <td>{{ ship['count'] }}</td>
-            <td>
-                <a href="/trace/{{ ship['mmsi'] }}" class="btn btn-sm btn-info">View Trace</a>
-                <a href="/delete_ship/{{ ship['mmsi'] }}" class="btn btn-sm btn-danger">Delete</a>
-            </td>
-        </tr>
+    <tr>
+        <td><a href="/ship/{{ ship['mmsi'] }}">{{ ship['mmsi'] }}</a></td>
+        <td>{{ ship['start_time'] }}</td>
+        <td>{{ ship['end_time'] }}</td>
+        <td>{{ ship['count'] }}</td>
+        <td>
+            <a href="/trace/{{ ship['mmsi'] }}" class="btn btn-sm btn-info">View Trace</a>
+            <a href="/delete_ship/{{ ship['mmsi'] }}" class="btn btn-sm btn-danger">Delete</a>
+        </td>
+    </tr>
     {% endfor %}
     </tbody>
 </table>
