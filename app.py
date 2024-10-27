@@ -428,7 +428,6 @@ def index():
         mmsi1 = request.form['mmsi1']
         mmsi2 = request.form['mmsi2']
         date = request.form['date']
-        distance = float(request.form.get('distance', 0.2))
         return redirect(url_for('conjection_trace', mmsi1=mmsi1, mmsi2=mmsi2, date=date))
     return render_template('index.html')
 
