@@ -40,11 +40,9 @@ class AisMap():
             if t1 is not None and t2 is not None:
                 sp1lat = t1[1]
                 sp1lon = t1[2]
-                sp1spd = t1[3]
                 sp1hed = t1[4]
                 sp2lat = t2[1]
                 sp2lon = t2[2]
-
                 sp2hed = t2[4]
 
                 sheet.append([i, sp1lat, sp1lon, sp2lat, sp2lon])

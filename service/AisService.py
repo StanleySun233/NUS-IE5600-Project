@@ -1,5 +1,5 @@
 import itertools
-from datetime import datetime, timedelta
+from datetime import timedelta
 from geopy.distance import geodesic
 import model
 import plot.ship_encounter
