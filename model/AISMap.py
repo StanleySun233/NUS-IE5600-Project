@@ -18,12 +18,17 @@ class AisMap():
     def print_ship_line(self, mmsi):
         pass
 
-    def is_collapse(self, mmsi1, mmsi2, date, distance=0.2, t=0.5):
+    def is_collapse(self, mmsi1, mmsi2, date=None, distance=0.2, t=0.5):
         ship1: model.Ship.Ship = self.data[mmsi1]
         ship2: model.Ship.Ship = self.data[mmsi2]
-        date = datetime.strptime(date, '%Y-%m-%d')
-        traces1 = [trace for trace in ship1.traces if trace.ts.date() == date.date()]
-        traces2 = [trace for trace in ship2.traces if trace.ts.date() == date.date()]
+        stss = []
+        if date:
+            date = datetime.strptime(date, '%Y-%m-%d')
+            traces1 = [trace for trace in ship1.traces if trace.ts.date() == date.date()]
+            traces2 = [trace for trace in ship2.traces if trace.ts.date() == date.date()]
+        else:
+            traces1 = [trace for trace in ship1.traces]
+            traces2 = [trace for trace in ship2.traces]
 
         beg = max([traces1[0].ts, traces2[0].ts])
         end = min([traces1[-1].ts, traces2[-1].ts])
@@ -45,10 +50,11 @@ class AisMap():
                 sp2lon = t2[2]
                 sheet.append([i, sp1lat, sp1lon, sp2lat, sp2lon])
                 dist = utils.util.haversine(sp1lon, sp1lat, sp2lon, sp2lat)
-                print(dist)
-                if dist <= distance:
-                    return True
-        return False
+                stss.append(dist)
+        if stss is None or len(stss) == 0:
+            return 100
+        else:
+            return min(stss)
 
 
 def create_ais_map(path):

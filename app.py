@@ -255,28 +255,32 @@ def conjection_trace():
     data = cursor.fetchall()
     # Close the database connection
     conn.close()
-    return utils.util.show_conj_trace_service(data, mmsi1, mmsi2)
+    # return utils.util.show_conj_trace_service(data, mmsi1, mmsi2)
+    return service.AisService.show_conj_trace_service(data, mmsi1, mmsi2)
 
 
 # 检查碰撞
 def check_collapse(date, distance=0.2):
     conn = get_db()
     cur = conn.cursor()
-    # 简单模拟：仅根据同一天的船舶位置计算碰撞（这里需要添加更多复杂逻辑）
-    cur.execute(
-        'SELECT a.mmsi as mmsi1, b.mmsi as mmsi2 FROM ais a, ais b WHERE a.ts LIKE ? AND b.ts LIKE ? AND a.mmsi != b.mmsi AND abs(a.lon - b.lon) < ? AND abs(a.lat - b.lat) < ?',
-        (f'{date}%', f'{date}%', distance, distance))
+    cur.execute("""
+        SELECT mmsi, ts, lon, lat,speed, heading
+        FROM ais 
+        WHERE DATE(ts) = DATE(?)
+        ORDER BY ts
+        """, (date,))
     collision_data = cur.fetchall()
     conn.close()
-    return collision_data
+    return service.AisService.check_is_collision(collision_data, distance,date)  # mmsi1,mmsi2,distance
 
 
 @app.route('/check_collapse', methods=['POST'])
 def check_collision_view():
-    date = request.form['date']
+    date = request.form.get('date', '')
     distance = float(request.form.get('distance', 0.2))
     collision_data = check_collapse(date, distance)
-    return render_template('collision.html', collision_data=collision_data)
+    # 将 date 作为查询参数传递
+    return render_template('collision.html', collision_data=collision_data, date=date)
 
 
 # 首页

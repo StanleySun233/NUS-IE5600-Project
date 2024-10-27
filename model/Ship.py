@@ -73,7 +73,6 @@ class Ship:
         if len(headings) == 0:
             headings = [1]
 
-
         # plt.scatter(lons, lats)
 
         # Step 3: Fit cubic splines for lat, lon, speed, and heading
@@ -89,8 +88,8 @@ class Ship:
             lon_interp = spline_lon(ts_timestamp)
             speed_interp = spline_speed(ts_timestamp)
             heading_interp = spline_heading(ts_timestamp)
-        except :
-            ts_timestamp=ts.timestamp()
+        except:
+            ts_timestamp = ts.timestamp()
             lat_interp = sum(lats) / len(lats)
             lon_interp = sum(lons) / len(lons)
             speed_interp = sum(speeds) / len(speeds)

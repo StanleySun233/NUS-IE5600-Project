@@ -7,7 +7,7 @@ class CSVReader:
         self.data = self.data[1:]
 
     def read(self):
-        data = []
+        _data = []
         try:
             with open(self.filename, 'r', encoding='utf-8') as file:
                 # 读取文件的每一行
@@ -15,8 +15,8 @@ class CSVReader:
                 for line in lines:
                     # 去除行末的换行符，并使用指定的分隔符分割字段
                     row = line.strip().split(self.delimiter)
-                    data.append(row)
-            return data
+                    _data.append(row)
+            return _data
         except FileNotFoundError:
             print(f"Error: File '{self.filename}' not found.")
             return None

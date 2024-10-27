@@ -1,24 +1,65 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>碰撞检测结果</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
 </head>
-<body>
-<h1>碰撞检测结果</h1>
-<table>
+<body class="container">
+
+<!-- 导航栏 -->
+<nav class="navbar navbar-expand-lg navbar-light bg-light mb-4">
+    <div class="container-fluid">
+        <a class="navbar-brand" href="/">船舶防碰撞系统</a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
+                aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav">
+                <li class="nav-item">
+                    <a class="nav-link" href="/ais">AIS 数据</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/ship">船舶数据</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link active" href="/">主页</a>
+                </li>
+            </ul>
+        </div>
+    </div>
+</nav>
+
+<h1 class="my-4">碰撞检测结果</h1>
+
+<!-- 碰撞检测结果表格 -->
+<table class="table table-bordered table-striped">
+    <thead class="table-dark">
     <tr>
         <th>船舶1</th>
         <th>船舶2</th>
+        <th>最近距离 (km)</th>
         <th>操作</th>
     </tr>
+    </thead>
+    <tbody>
     {% for collision in collision_data %}
         <tr>
             <td>{{ collision['mmsi1'] }}</td>
             <td>{{ collision['mmsi2'] }}</td>
+            <td>{{ collision['distance'] }}</td>
             <td>
-                <a href="/conjection_trace?mmsi1={{ collision['mmsi1'] }}&mmsi2={{ collision['mmsi2'] }}">查看联合轨迹</a>
+                <a href="/conjection_trace?mmsi1={{ collision['mmsi1'] }}&mmsi2={{ collision['mmsi2'] }}&date={{ date }}"
+                   class="btn btn-primary btn-sm">查看联合轨迹</a>
             </td>
-        </tr> {% endfor %} </table>
+        </tr>
+    {% endfor %}
+    </tbody>
+</table>
 
+<!-- Bootstrap JS -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>
