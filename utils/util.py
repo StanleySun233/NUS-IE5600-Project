@@ -42,15 +42,18 @@ def generate_time_range(beg, end, t):
 def generate_folium_map(formatted_data, mmsi):
     m = folium.Map(location=[29.7450467, 122.17775], zoom_start=12)
     features = []
+
     for i, row in enumerate(formatted_data):
+        print(row)
+        print(formatted_data[i])
         feature = {
             'type': 'Feature',
             'geometry': {
                 'type': 'Point',
-                'coordinates': [row[2], row[3]],
+                'coordinates': [row[1], row[2]] if len(row) != 6 else [row[2],row[3]],
             },
             'properties': {
-                'time': row[1].isoformat(),
+                'time': row[0].isoformat() if len(row) !=6 else row[1].isoformat(),
                 'style': {'color': 'blue' if row[0] == mmsi else 'red'},
                 'icon': 'circle',
                 'iconstyle': {
