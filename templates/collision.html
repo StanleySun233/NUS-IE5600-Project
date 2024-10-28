@@ -47,17 +47,17 @@
     </thead>
     <tbody>
     {% for collision in collision_data %}
-    <tr>
-        <td>{{ collision['mmsi1'] }}</td>
-        <td>{{ collision['mmsi2'] }}</td>
-        <td>{{ collision['distance'] }}</td>
-        <td>{{ collision['encounter'] }}</td>
-        <td>{{ collision['ts'] }}</td>
-        <td>
-            <a href="/conjection_trace?mmsi1={{ collision['mmsi1'] }}&mmsi2={{ collision['mmsi2'] }}&date={{ date }}"
-               class="btn btn-primary btn-sm">View Combined Trace</a>
-        </td>
-    </tr>
+        <tr>
+            <td>{{ collision['mmsi1'] }}</td>
+            <td>{{ collision['mmsi2'] }}</td>
+            <td>{{ collision['distance'] }}</td>
+            <td>{{ collision['encounter'] }}</td>
+            <td>{{ collision['ts'] }}</td>
+            <td>
+                <a href="/conjection_trace?mmsi1={{ collision['mmsi1'] }}&mmsi2={{ collision['mmsi2'] }}&date={{ date }}"
+                   class="btn btn-primary btn-sm">View Combined Trace</a>
+            </td>
+        </tr>
     {% endfor %}
     </tbody>
 </table>

@@ -1,7 +1,3 @@
-from datetime import datetime
-
-from django.templatetags.tz import datetimeobject
-
 import utils.util
 
 

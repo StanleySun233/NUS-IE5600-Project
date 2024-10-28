@@ -1,17 +1,13 @@
+import math
 import os
-import sqlite3
-from datetime import datetime
 
 import cv2
 import matplotlib.pyplot as plt
+import matplotlib.ticker as ticker
 from matplotlib.patches import Rectangle
 from matplotlib.transforms import Affine2D
 
-import model
-import utils.util
 import service
-import matplotlib.ticker as ticker
-import math
 
 
 def plot_encounter(ship1, ship2, date):

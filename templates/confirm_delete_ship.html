@@ -23,15 +23,15 @@
     </thead>
     <tbody>
     {% for ais in ais_data %}
-    <tr>
-        <td>{{ ais['id'] }}</td>
-        <td>{{ ais['mmsi'] }}</td>
-        <td>{{ ais['ts'] }}</td>
-        <td>{{ ais['lon'] }}</td>
-        <td>{{ ais['lat'] }}</td>
-        <td>{{ ais['speed'] }}</td>
-        <td>{{ ais['heading'] }}</td>
-    </tr>
+        <tr>
+            <td>{{ ais['id'] }}</td>
+            <td>{{ ais['mmsi'] }}</td>
+            <td>{{ ais['ts'] }}</td>
+            <td>{{ ais['lon'] }}</td>
+            <td>{{ ais['lat'] }}</td>
+            <td>{{ ais['speed'] }}</td>
+            <td>{{ ais['heading'] }}</td>
+        </tr>
     {% endfor %}
     </tbody>
 </table>

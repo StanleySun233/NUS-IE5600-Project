@@ -1,9 +1,10 @@
 from datetime import datetime
+
 import model
-import model.ShipPoint
-import utils.CsvReader
 import model.Ship
 import model.ShipPoint
+import model.ShipPoint
+import utils.CsvReader
 
 
 class AisMap():

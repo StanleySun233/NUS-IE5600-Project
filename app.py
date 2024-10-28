@@ -1,6 +1,8 @@
-import service.AisService
-from flask import Flask, render_template, request, redirect, url_for, send_file
 import sqlite3
+
+from flask import Flask, render_template, request, redirect, url_for
+
+import service.AisService
 
 app = Flask(__name__)
 

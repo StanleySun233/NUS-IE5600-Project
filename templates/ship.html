@@ -60,16 +60,16 @@
     </thead>
     <tbody>
     {% for ship in ship_data %}
-    <tr>
-        <td><a href="/ship/{{ ship['mmsi'] }}">{{ ship['mmsi'] }}</a></td>
-        <td>{{ ship['start_time'] }}</td>
-        <td>{{ ship['end_time'] }}</td>
-        <td>{{ ship['count'] }}</td>
-        <td>
-            <a href="/trace/{{ ship['mmsi'] }}" class="btn btn-sm btn-info">View Trace</a>
-            <a href="/delete_ship/{{ ship['mmsi'] }}" class="btn btn-sm btn-danger">Delete</a>
-        </td>
-    </tr>
+        <tr>
+            <td><a href="/ship/{{ ship['mmsi'] }}">{{ ship['mmsi'] }}</a></td>
+            <td>{{ ship['start_time'] }}</td>
+            <td>{{ ship['end_time'] }}</td>
+            <td>{{ ship['count'] }}</td>
+            <td>
+                <a href="/trace/{{ ship['mmsi'] }}" class="btn btn-sm btn-info">View Trace</a>
+                <a href="/delete_ship/{{ ship['mmsi'] }}" class="btn btn-sm btn-danger">Delete</a>
+            </td>
+        </tr>
     {% endfor %}
     </tbody>
 </table>

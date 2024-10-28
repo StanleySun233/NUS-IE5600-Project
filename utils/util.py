@@ -4,8 +4,6 @@ from datetime import datetime, timedelta
 import folium
 from folium.plugins import TimestampedGeoJson
 
-import model.AISMap
-
 
 def str2datetime(s):
     return datetime.strptime(s, "%Y-%m-%d %H:%M:%S")

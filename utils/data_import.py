@@ -1,7 +1,6 @@
 import sqlite3
-import pandas as pd
 
-import sqlite3
+import pandas as pd
 
 df = pd.read_excel('../data/tras_may.xls').values.tolist()
 

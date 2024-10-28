@@ -1,11 +1,12 @@
 import sqlite3
-import matplotlib.pyplot as plt
-import numpy as np
-import cv2
-from matplotlib.patches import Wedge
+
 import cartopy.crs as ccrs
 import cartopy.feature as cfeature
-import matplotlib.patches as patches
+import cv2
+import matplotlib.pyplot as plt
+import numpy as np
+from matplotlib.patches import Wedge
+
 import model
 import service
 

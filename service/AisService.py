@@ -1,5 +1,6 @@
 import itertools
 from datetime import timedelta
+
 import model
 import plot.ship_encounter
 import utils

@@ -1,7 +1,6 @@
-import plot
-import matplotlib.pyplot as plt
-import numpy as np
 from matplotlib.patches import Rectangle
+
+import plot
 
 
 def plot_rotated_rectangle(lat, lon, heading, a, b, ax):

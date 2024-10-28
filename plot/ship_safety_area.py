@@ -1,13 +1,15 @@
+import math
 import os.path
 import sqlite3
-import matplotlib.pyplot as plt
-import cv2
-from matplotlib.patches import Wedge
+
 import cartopy.crs as ccrs
 import cartopy.feature as cfeature
+import cv2
+import matplotlib.pyplot as plt
+from matplotlib.patches import Wedge
+
 import model
 import service
-import math
 
 # Connect to SQLite database and fetch data
 conn = sqlite3.connect('../data/ais.db')
