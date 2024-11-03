@@ -41,15 +41,13 @@ It can be summary that:
 
 **Key Functionalities & Test Cases**
 
-| S/N | Description of Test Cases/Business Rules | Test Cases(Input Parameters, Expected Outputs, Special Cases) |
-|-----|------------------------------------------|---------------------------------------------------------------|
-| 1   | 1                                        | 1                                                             |
-| 2   | 1                                        | 1                                                             |
-| 3   | 1                                        | 1                                                             |
-| 4   | 1                                        | 1                                                             |
-| 5   | 1                                        | 1                                                             |
-| 6   | 1                                        | 1                                                             |
-| 7   | 1                                        | 1                                                             |
-| 8   | 1                                        | 1                                                             |
-| 9   | 1                                        | 1                                                             |
-| 10  | 1                                        | 1                                                             |
+| S/N | Description of Test Cases/Business Rules            | Test Cases(Input Parameters, Expected Outputs, Special Cases)                                     |
+|-----|-----------------------------------------------------|---------------------------------------------------------------------------------------------------|
+| 1   | add a new ship.                                     | MMSI=12345678, add success.                                                                       |
+| 2   | add a ship appeared in data.                        | MMSI=412356358, Duplicate MMSIs are not allowed in the database                                   |
+| 3   | delete a ship linked with some ais data.            | MMSI=200017675, also delete 57 AIS data.                                                          |
+| 4   | create a ais data, which mmsi not appeared in data. | MMSI=1, before create this data, system first generate ship.MMSI=1                                |
+| 5   | view ais trace.                                     | MMSI1=412415970, generate html successfully.                                                      |
+| 6   | request to generate a non-existent ship.            | MMSI=2, return nothing.                                                                           |
+| 7   | view conjection trace.                              | MMSI1=412415970, MMSI2=413457740, DATE=2021-05-05, generate html and mp4 simulation successfully. |
+| 8   | view conjection trace with no-existent ship.        | MMSI1=1, MMSI2=2, return nothing.                                                                 |
