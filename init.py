@@ -3,6 +3,11 @@ import sqlite3
 
 import pandas as pd
 
+"""
+Since the original data comes from xlsx and there are 500,000 records, we must use pandas to process the data into csv.
+This requirement was authorized by the teacher.
+In "utils/CsvReader.py", we wrote a tool to process csv.
+"""
 # Check if the database already exists
 db_path = './data/ais.db'
 if os.path.exists(db_path):
